@@ -1,0 +1,118 @@
+[DisasterWarning]
+# 启用/禁用插件
+enabled = true
+
+# 管理员 wxid 列表（可选，不填则使用 main_config.toml 中的 admins）
+# admin_wxids = ["sxkiss_com"]
+
+# 推送目标群聊/好友 wxid 列表
+# 留空表示推送到所有接收到的消息来源群
+push_targets = []
+
+# 数据源配置
+[fans_studio]
+enabled = true
+# FAN Studio WebSocket 地址
+url = "wss://ws.fanstudio.tech/all"
+backup_url = "wss://ws.fanstudio.hk/all"
+
+[fans_studio.sources]
+china_earthquake_warning = true
+china_earthquake_warning_provincial = true
+taiwan_cwa_earthquake = true
+taiwan_cwa_report = true
+china_cenc_earthquake = true
+japan_jma_eew = false
+usgs_earthquake = true
+china_weather_alarm = true
+china_tsunami = true
+
+[p2p_earthquake]
+enabled = true
+url = "wss://api.p2pquake.net/v2/ws"
+
+[p2p_earthquake.sources]
+japan_jma_eew = true
+japan_jma_earthquake = true
+japan_jma_tsunami = true
+
+[wolfx]
+enabled = true
+url = "wss://ws-api.wolfx.jp/all_eew"
+
+[wolfx.sources]
+japan_jma_eew = true
+china_cenc_eew = true
+taiwan_cwa_eew = true
+japan_jma_earthquake = true
+china_cenc_earthquake = true
+
+[global_quake]
+enabled = true
+url = "wss://gqm.aloys23.link/ws"
+
+# 本地烈度监控
+[local_monitoring]
+enabled = true
+latitude = 30.5728
+longitude = 104.0668
+place_name = "成都市"
+strict_mode = false
+intensity_threshold = 1.0
+
+# 地震过滤
+[earthquake_filters]
+# 最小震级过滤器（USGS 等）
+usgs_min_magnitude = 1.5
+# 国内地震最低震级阈值
+domestic_min_magnitude = 1.0
+# 海外地震最低震级阈值
+overseas_min_magnitude = 4.0
+# 烈度过滤器
+min_intensity = 1.0
+# 日本震度过滤器
+min_scale = 1.0
+# 关键词黑名单（包含这些关键词的地震将被过滤）
+blacklist_keywords = []
+# 关键词白名单（如果设置了白名单，只推送包含这些关键词的地震）
+whitelist_keywords = []
+
+# 推送频率控制
+[push_frequency]
+# CEA/CWA 每 N 报推送一次（1=每次都推）
+cea_cwa_report_n = 1
+# JMA 每 N 报推送一次
+jma_report_n = 1
+# Global Quake 每 N 报推送一次
+gq_report_n = 1
+# 最终报总是推送
+final_report_always_push = true
+
+# 消息格式
+[message_format]
+# 是否包含地图（暂不实现，预留）
+include_map = false
+
+# WebSocket 连接配置
+[websocket]
+reconnect_interval = 10
+max_reconnect_retries = 3
+connection_timeout = 15
+heartbeat_interval = 120
+
+# 气象预警配置
+[weather]
+# 最低预警级别: 白色 < 蓝色 < 黄色 < 橙色 < 红色
+min_color_level = "白色"
+# 关键词白名单（留空=全国）
+keywords = []
+# 最大描述字数，0=不限制
+max_description_length = 512
+# 显示预警图标
+enable_icon = true
+
+# 调试配置
+[debug]
+enable_raw_logging = false
+raw_log_path = "disaster_warning_raw.log"
+startup_silence_seconds = 0
