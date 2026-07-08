@@ -189,7 +189,7 @@ class DisasterWarningService:
         try:
             events = parse_fan_studio(data)
             if events:
-                logger.debug(f"[灾害预警] fan_studio 解析到 {len(events)} 个事件")
+                logger.info(f"[灾害预警] fan_studio 解析到 {len(events)} 个事件")
             for evt in events:
                 await self._process_event(evt)
         except Exception as e:

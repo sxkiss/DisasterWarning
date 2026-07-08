@@ -30,8 +30,16 @@ except ImportError:
 
 # ── 通用工具函数 ──────────────────────────────────────────
 
-def _parse_time(raw: Any, tz_offset_hours: int = 8) -> Optional[datetime]:
-    """尝试解析多种时间格式。"""
+def _parse_time(raw: Any, tz_offset_hours: int = 8, assume_local: bool = True) -> Optional[datetime]:
+    """尝试解析多种时间格式。
+
+    Args:
+        raw: 原始时间字符串
+        tz_offset_hours: 目标时区偏移（小时）
+        assume_local: 如果时间没有时区信息，是否假设已是本地时间（UTC+8）。
+                      FAN Studio/Wolfx/P2P 的时间都是北京时间，应为 True。
+                      Global Quake 的 ISO 时间自带时区，不受此参数影响。
+    """
     if raw is None:
         return None
     s = str(raw)
@@ -45,7 +53,11 @@ def _parse_time(raw: Any, tz_offset_hours: int = 8) -> Optional[datetime]:
         try:
             dt = datetime.strptime(s, fmt)
             if dt.tzinfo is None:
-                dt = dt.replace(tzinfo=timezone.utc)
+                # 没有时间信息，假设已是本地时间（UTC+8），直接设置时区
+                if assume_local:
+                    dt = dt.replace(tzinfo=timezone(timedelta(hours=8)))
+                else:
+                    dt = dt.replace(tzinfo=timezone.utc)
             return dt.astimezone(timezone(timedelta(hours=tz_offset_hours)))
         except (ValueError, TypeError):
             continue
@@ -219,7 +231,7 @@ def parse_fan_studio(data: dict) -> list:
 def _parse_fan_studio_by_type(data: dict, results: list) -> None:
     """按 msg_type 分类解析 FAN Studio 消息（向后兼容）。"""
     msg_type = data.get("type", data.get("msgType", data.get("message_type", "")))
-    payload = data.get("data", data)
+    payload = _unwrap_nested_payload(data)
 
     # 地震预警
     if msg_type in ("cenc_eew", "cea", "cwa-eew", "jma", "jma_eew", "sc_eew", "fj_eew", "cwa_eew"):
