@@ -261,7 +261,8 @@ class DisasterWarningService:
         event_key = self._event_key(evt)
         if event_key in self._seen_events:
             age = time.time() - self._seen_events[event_key]
-            if age < 300:  # 5 分钟内相同事件视为重复
+            if age < 1800:  # 30 分钟内相同事件视为重复
+                logger.debug(f"[灾害预警] 去重跳过: {event_key} (age={age:.0f}s) {evt.location_str} M{evt.magnitude:.1f}")
                 return
         self._seen_events[event_key] = time.time()
 
@@ -281,11 +282,20 @@ class DisasterWarningService:
     def _event_key(self, evt: Any) -> str:
         """生成事件去重键。"""
         if isinstance(evt, EarthquakeEvent):
-            # 使用 event_id 去重，比坐标更精确
-            if evt.event_id and evt.event_id.startswith("gq_"):
-                # Global Quake 事件使用 event_id
-                return f"{evt.source.value}:{evt.event_id}"
-            return f"{evt.source.value}:{evt.magnitude:.1f}:{evt.epicenter.latitude:.2f}:{evt.epicenter.longitude:.2f}"
+            eid = evt.event_id or ""
+            import re
+            # 去掉版本号后缀
+            base_id = re.sub(r'[-_]v\d+$|[-_]S\d+$', '', eid)
+            # 如果 base_id 是纯数字时间戳（initial_all 的 event_id 格式），
+            # 说明不是真正的唯一标识，fallback 到 location+magnitude
+            if base_id and re.match(r'^\d{14}$', base_id):
+                loc = evt.epicenter.location_name or evt.epicenter.province or ""
+                return f"{evt.source.value}:{loc}:{evt.magnitude:.1f}"
+            if base_id:
+                return f"{evt.source.value}:{base_id}"
+            # 最终 fallback: 用 location + 震级去重
+            loc = evt.epicenter.location_name or evt.epicenter.province or ""
+            return f"{evt.source.value}:{loc}:{evt.magnitude:.1f}"
         elif isinstance(evt, TsunamiEvent):
             return f"tsunami:{evt.source.value}:{evt.warning_level}"
         elif isinstance(evt, WeatherAlert):

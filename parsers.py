@@ -187,16 +187,10 @@ def parse_fan_studio(data: dict) -> list:
 
     # 处理 initial_all：一条消息包含多个来源的初始化快照
     if msg_type == "initial_all":
-        for key, value in data.items():
-            if not isinstance(value, dict):
-                continue
-            # 跳过 type 等非数据字段
-            if key in ("type", "md5", "ver", "id", "timestamp"):
-                continue
-            # 递归解析每个子来源
-            sub_results = parse_fan_studio({"type": key, **value})
-            results.extend(sub_results)
-        return results
+        # initial_all 用于建立初始状态，不产生推送事件
+        # 只记录日志，不返回任何事件
+        logger.debug(f"[灾害预警] fan_studio 收到 initial_all 初始化快照，跳过推送")
+        return results  # 直接返回空列表
 
     # 处理 update：增量更新消息
     if msg_type == "update":

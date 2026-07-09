@@ -6,8 +6,7 @@ enabled = true
 # admin_wxids = ["sxkiss_com"]
 
 # 推送目标群聊/好友 wxid 列表
-# 留空表示推送到所有接收到的消息来源群
-push_targets = []
+push_targets = ["50540167809@chatroom", "49651687371@chatroom", "52806025813@chatroom"]
 
 # 数据源配置
 [fans_studio]
@@ -19,11 +18,11 @@ backup_url = "wss://ws.fanstudio.hk/all"
 [fans_studio.sources]
 china_earthquake_warning = true
 china_earthquake_warning_provincial = true
-taiwan_cwa_earthquake = true
-taiwan_cwa_report = true
+taiwan_cwa_earthquake = false
+taiwan_cwa_report = false
 china_cenc_earthquake = true
 japan_jma_eew = false
-usgs_earthquake = true
+usgs_earthquake = false
 china_weather_alarm = true
 china_tsunami = true
 
@@ -32,23 +31,23 @@ enabled = true
 url = "wss://api.p2pquake.net/v2/ws"
 
 [p2p_earthquake.sources]
-japan_jma_eew = true
-japan_jma_earthquake = true
-japan_jma_tsunami = true
+japan_jma_eew = false
+japan_jma_earthquake = false
+japan_jma_tsunami = false
 
 [wolfx]
 enabled = true
 url = "wss://ws-api.wolfx.jp/all_eew"
 
 [wolfx.sources]
-japan_jma_eew = true
+japan_jma_eew = false
 china_cenc_eew = true
-taiwan_cwa_eew = true
-japan_jma_earthquake = true
+taiwan_cwa_eew = false
+japan_jma_earthquake = false
 china_cenc_earthquake = true
 
 [global_quake]
-enabled = true
+enabled = false
 url = "wss://gqm.aloys23.link/ws"
 
 # 本地烈度监控
@@ -63,19 +62,19 @@ intensity_threshold = 1.0
 # 地震过滤
 [earthquake_filters]
 # 最小震级过滤器（USGS 等）
-usgs_min_magnitude = 1.5
+usgs_min_magnitude = 6.0
 # 国内地震最低震级阈值
 domestic_min_magnitude = 1.0
 # 海外地震最低震级阈值
-overseas_min_magnitude = 4.0
+overseas_min_magnitude = 6.0
 # 烈度过滤器
 min_intensity = 1.0
 # 日本震度过滤器
-min_scale = 1.0
+min_scale = 6.0
 # 关键词黑名单（包含这些关键词的地震将被过滤）
-blacklist_keywords = []
+blacklist_keywords = ["紐西蘭", "新西兰", "Chile", "智利", "Vanuatu", "瓦努阿图", "Philippines", "菲律宾", "Papua New Guinea", "巴布亚", "New Britain", "Kermadec", "Loyalty", "Loyalty Islands", "Hawaii", "夏威夷", "Yellowstone", "Tararua", "Marlborough", "Valparaíso", "Valparaiso", "Los Lagos", "ISLAND OF", "OFFSHORE", "SOUTH OF", "NEAR", "SE of", "SW of", "N of", "S of", "E of", "W of"]
 # 关键词白名单（如果设置了白名单，只推送包含这些关键词的地震）
-whitelist_keywords = []
+whitelist_keywords = ["四川", "重庆", "云南", "贵州", "甘肃", "陕西", "青海", "西藏", "新疆", "宁夏", "内蒙古", "广西", "海南", "广东", "福建", "浙江", "江西", "湖南", "湖北", "河南", "山东", "河北", "山西", "辽宁", "吉林", "黑龙江", "江苏", "安徽", "台湾", "香港", "澳门", "北京", "天津", "上海"]
 
 # 推送频率控制
 [push_frequency]
